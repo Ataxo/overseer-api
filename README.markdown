@@ -1,6 +1,6 @@
 # Overseer-API
 
-Accessing Overseer and send easily execptions for your application
+Accessing Overseer and send easily exceptions for your application
 
 ## Instalation
 
@@ -25,7 +25,9 @@ require "overseer-api"
 
 ## Initialization
 
-Setup your config values
+Setup your config values 
+* Rails - put it into config/initializers/overseer.rb
+* Sinatra - somewher in initialization
 
 ``` ruby
 OverseerApi.app_name = "Your app name"
@@ -77,7 +79,7 @@ end
 ### In your Resque
 
 You need to use [resque-scheduler](https://github.com/bvandenbos/resque-scheduler)
-and in you `schedule.yml` add lines:
+and in your `schedule.yml` add lines:
 ``` yml
 send_failed_to_overseer:
   cron: "*/10 * * * *"
