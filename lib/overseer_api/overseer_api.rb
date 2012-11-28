@@ -51,8 +51,12 @@ module OverseerApi
   # CALLING Overseer API
   ####################################################
 
-  def self.log type, exception, args = {}, tags = "", raised_at = Time.now
+  def self.send type, exception, args = {}, tags = "", raised_at = Time.now
     request type, exception, args, tags, raised_at
+  end
+
+  def self.log exception, args = {}, tags = "", raised_at = Time.now
+    request :log, exception, args, tags, raised_at
   end
 
   def self.error exception, args = {}, tags = "", raised_at = Time.now

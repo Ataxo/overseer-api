@@ -42,7 +42,7 @@ OverseerApi.url = "http://overseer.ataxo.com"
 
 When some exception came, you can log it by calling method:
 ``` ruby
-OverseerApi.log TYPE, EXECEPTION, ARGUMENTS, TAGS, RAISED_AT
+OverseerApi.send TYPE, EXECEPTION, ARGUMENTS, TAGS, RAISED_AT
 TYPE = [:error, :warn, :info]
 EXCEPTION = subclass of Exception
 ARGUMENTS = nil, array or hash
@@ -66,6 +66,7 @@ begin
 rescue Exception => e
   OverseerApi.error e, args
   #optionaly
+  OverseerApi.log e, args
   OverseerApi.info e, args
   OverseerApi.warn e, args
 end
