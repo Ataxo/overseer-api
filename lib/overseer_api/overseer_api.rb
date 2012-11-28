@@ -72,7 +72,7 @@ module OverseerApi
   end
 
   def self.request type, exception, args, tags, raised_at
-    request_with_args {
+    request_with_args({
       klass: exception.class.to_s,
       message: exception.message,
       backtrace: exception.backtrace.to_a.join("\n"),
@@ -80,7 +80,7 @@ module OverseerApi
       raised_at: raised_at,
       tags: tags,
       error_type: type,
-    }
+    })
   end
 
   def self.request_with_args params
@@ -102,7 +102,7 @@ module OverseerApi
 
     curl.http "POST"
 
-    puts response = Yajl::Parser.parse(curl.body_str)
+    response = Yajl::Parser.parse(curl.body_str)
   rescue Exception => e 
     puts "Problem with sending data to Overseer!"
     puts e.class
@@ -122,7 +122,7 @@ module OverseerApi
 
     #call request to Overseer for every failed job separately
     fails.each do |fail|
-      request_with_args {
+      request_with_args({
         klass: fail["exception"],
         message: fail["error"],
         backtrace: fail["backtrace"].join("\n"),
@@ -130,7 +130,7 @@ module OverseerApi
         tags: fail["queue"],
         error_type: :error,
         raised_at: fail["failed_at"],
-      }
+      })
     end
 
     #clear all Failures!
