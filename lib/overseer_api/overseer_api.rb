@@ -72,9 +72,7 @@ module OverseerApi
   end
 
   def self.request type, exception, args, tags, raised_at
-
-    params = {
-      app_name: OverseerApi.app_name,
+    request_with_args {
       klass: exception.class.to_s,
       message: exception.message,
       backtrace: exception.backtrace.to_a.join("\n"),
@@ -83,6 +81,9 @@ module OverseerApi
       tags: tags,
       error_type: type,
     }
+  end
+
+  def self.request_with_args params
 
     curl = Curl::Easy.new 
     curl.headers["Content-Type"] = "application/json"
@@ -92,8 +93,12 @@ module OverseerApi
     #set right url dependetnly on verb
     curl.url = OverseerApi.api_url
 
-    puts Yajl::Encoder.encode(params)
-    curl.post_body = Yajl::Encoder.encode(params)
+    #set post body + add app name
+    curl.post_body = Yajl::Encoder.encode(
+      params.merge(
+        app_name: OverseerApi.app_name
+      )
+    )
 
     curl.http "POST"
 
@@ -103,6 +108,34 @@ module OverseerApi
     puts e.class
     puts e.message
     puts e.backtrace.join("\n")
+  end
+
+  def self.perform args = {}
+    #get count of all failed jobs
+    count = Resque::Failure.count
+    
+    #get all failed jobs
+    fails = Resque::Failure.all(0, Resque::Failure.count)
+
+    #if there is only one error - make sure in fails is an array
+    fails = [fails] if count == 1
+
+    #call request to Overseer for every failed job separately
+    fails.each do |fail|
+      request_with_args {
+        klass: fail["exception"],
+        message: fail["error"],
+        backtrace: fail["backtrace"].join("\n"),
+        arguments: fail["payload"],
+        tags: fail["queue"],
+        error_type: :error,
+        raised_at: fail["failed_at"],
+      }
+    end
+
+    #clear all Failures!
+    Resque::Failure.clear
+
   end
 
 end

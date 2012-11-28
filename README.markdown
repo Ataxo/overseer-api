@@ -40,6 +40,7 @@ OverseerApi.url = "http://overseer.ataxo.com"
 
 ## Working with Gem
 
+### In your application
 When some exception came, you can log it by calling method:
 ``` ruby
 OverseerApi.send TYPE, EXECEPTION, ARGUMENTS, TAGS, RAISED_AT
@@ -71,6 +72,19 @@ rescue Exception => e
   OverseerApi.warn e, args
 end
 
+```
+
+### In your Resque
+
+You need to use [resque-scheduler](https://github.com/bvandenbos/resque-scheduler)
+and in you `schedule.yml` add lines:
+``` yml
+send_failed_to_overseer:
+  cron: "*/10 * * * *"
+  class: OverseerApi
+  queue: overseer #change this by your own application specific workers
+  #ensure that at least one worker is working on this queue
+  description: "Send failed jobs to Overseer"
 ```
 
 ## Copyright
