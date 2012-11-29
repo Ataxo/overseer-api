@@ -8,7 +8,7 @@ module OverseerApi
   @config = {
     url: "http://overseer.ataxo.com",
     version: :v1,
-    api_name: "SlimApi.name = 'YOUR APPLICATION NAME'",
+    app_name: "SlimApi.name = 'YOUR APPLICATION NAME'",
   }
 
   def self.url= url
