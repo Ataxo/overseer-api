@@ -115,24 +115,32 @@ module OverseerApi
     count = Resque::Failure.count
     
     #get all failed jobs
-    fails = Resque::Failure.all(0, Resque::Failure.count)
+    Resque::Failure.count.times do |i|
+      begin
+        fail = Resque::Failure.all(i, 1)
 
-    #if there is only one error - make sure in fails is an array
-    fails = [fails] if count == 1
-
-    #call request to Overseer for every failed job separately
-    fails.each do |fail|
-      request_with_args({
-        klass: fail["exception"],
-        message: fail["error"],
-        backtrace: fail["backtrace"].join("\n"),
-        arguments: fail["payload"],
-        tags: fail["queue"],
-        error_type: :error,
-        raised_at: fail["failed_at"],
-      })
+        #call request to Overseer for every failed job separately
+        request_with_args({
+          klass: fail["exception"],
+          message: fail["error"],
+          backtrace: fail["backtrace"].join("\n"),
+          arguments: fail["payload"],
+          tags: fail["queue"],
+          error_type: :error,
+          raised_at: fail["failed_at"],
+        })
+      rescue
+        #call request to Overseer for every failed job separately
+        request_with_args({
+          klass: "ResqueError",
+          message: "some wierd error in resque",
+          backtrace: "Look at arguments",
+          arguments: {job: Resque.redis.lindex("resque:failed", i)},
+          error_type: :error,
+          raised_at: Time.now,
+        })
+      end
     end
-
     #clear all Failures!
     Resque::Failure.clear
 
