@@ -72,15 +72,31 @@ module OverseerApi
   end
 
   def self.request type, exception, args, tags, raised_at
-    request_with_args({
-      klass: exception.class.to_s,
-      message: exception.message,
-      backtrace: exception.backtrace.to_a.join("\n"),
+    params = {
       arguments: args,
       raised_at: raised_at,
       tags: tags,
       error_type: type,
-    })
+    }
+    if exception.is_a?(Exception)
+      request_with_args(params.merge({
+        klass: exception.class.to_s,
+        message: exception.message,
+        backtrace: exception.backtrace.to_a.join("\n"),
+      }))
+    elsif exception.is_a?(Hash)
+      request_with_args(params.merge({
+        klass: ("#{exception[:klass]}" rescue "not_set"),
+        message: ("#{exception[:message]}." rescue "not_set"),
+        backtrace: ("#{exception[:backtrace]}." rescue "not_set"),
+      }))
+    else 
+      request_with_args(params.merge({
+        klass: exception.to_s,
+        message: "not_set",
+        backtrace: "not_set",
+      }))
+    end
   end
 
   def self.request_with_args params
@@ -99,7 +115,7 @@ module OverseerApi
         app_name: OverseerApi.app_name
       )
     )
-
+    puts params
     curl.http "POST"
 
     response = Yajl::Parser.parse(curl.body_str)

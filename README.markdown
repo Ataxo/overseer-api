@@ -73,7 +73,15 @@ rescue Exception => e
   OverseerApi.info e, args
   OverseerApi.warn e, args
 end
+```
 
+if you don't rescuing from begin/rescue block and you want to send log to Overseer you can use:
+``` ruby
+#string as name of error
+OverseerApi.info "MyCustomClass", {foo:"bar"}
+
+#or use hash with custom message and backtrace
+OverseerApi.info {klass: "MyCustomClass", message: "My message"}, {foo:"bar"}
 ```
 
 ### In your Resque
