@@ -15,7 +15,7 @@ Or put into Gemfile
 ``` ruby
 gem "overseer-api"
 #or
-gem "overseer-api", :git => "git@github.com:Ataxo/overseer-api.git"
+gem "overseer-api", :git => "git://github.com/Ataxo/overseer-api.git"
 ```
 
 and somewhere before use (not rails - they will require gem automaticaly)
