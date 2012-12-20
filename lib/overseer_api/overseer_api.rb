@@ -51,27 +51,27 @@ module OverseerApi
   # CALLING Overseer API
   ####################################################
 
-  def self.send type, exception, args = {}, tags = "", raised_at = Time.now
-    request type, exception, args, tags, raised_at
+  def self.send_exception type, exception, args = {}, tags = "", raised_at = Time.now
+    api_request type, exception, args, tags, raised_at
   end
 
   def self.log exception, args = {}, tags = "", raised_at = Time.now
-    request :log, exception, args, tags, raised_at
+    api_request :log, exception, args, tags, raised_at
   end
 
   def self.error exception, args = {}, tags = "", raised_at = Time.now
-    request :error, exception, args, tags, raised_at
+    api_request :error, exception, args, tags, raised_at
   end
 
   def self.warn exception, args = {}, tags = "", raised_at = Time.now
-    request :warn, exception, args, tags, raised_at
+    api_request :warn, exception, args, tags, raised_at
   end
 
   def self.info exception, args = {}, tags = "", raised_at = Time.now
-    request :info, exception, args, tags, raised_at
+    api_request :info, exception, args, tags, raised_at
   end
 
-  def self.request type, exception, args, tags, raised_at
+  def self.api_request type, exception, args, tags, raised_at
     params = {
       arguments: args,
       raised_at: raised_at,
@@ -79,19 +79,19 @@ module OverseerApi
       error_type: type,
     }
     if exception.is_a?(Exception)
-      request_with_args(params.merge({
+      api_request_with_args(params.merge({
         klass: exception.class.to_s,
         message: exception.message,
         backtrace: exception.backtrace.to_a.join("\n"),
       }))
     elsif exception.is_a?(Hash)
-      request_with_args(params.merge({
+      api_request_with_args(params.merge({
         klass: ("#{exception[:klass]}" rescue "not_set"),
         message: ("#{exception[:message]}." rescue "not_set"),
         backtrace: ("#{exception[:backtrace]}." rescue "not_set"),
       }))
     else 
-      request_with_args(params.merge({
+      api_request_with_args(params.merge({
         klass: exception.to_s,
         message: "not_set",
         backtrace: "not_set",
@@ -99,7 +99,7 @@ module OverseerApi
     end
   end
 
-  def self.request_with_args params
+  def self.api_request_with_args params
 
     curl = Curl::Easy.new 
     curl.headers["Content-Type"] = "application/json"
@@ -136,7 +136,7 @@ module OverseerApi
         fail = Resque::Failure.all(i, 1)
 
         #call request to Overseer for every failed job separately
-        request_with_args({
+        api_request_with_args({
           klass: fail["exception"],
           message: fail["error"],
           backtrace: fail["backtrace"].join("\n"),
@@ -147,7 +147,7 @@ module OverseerApi
         })
       rescue
         #call request to Overseer for every failed job separately
-        request_with_args({
+        api_request_with_args({
           klass: "ResqueError",
           message: "some wierd error in resque",
           backtrace: "Look at arguments",
