@@ -142,7 +142,7 @@ module OverseerApi
           backtrace: fail["backtrace"].join("\n"),
           arguments: fail["payload"],
           tags: fail["queue"],
-          error_type: :error,
+          error_type: :warn,
           raised_at: fail["failed_at"],
         })
       rescue
@@ -152,7 +152,7 @@ module OverseerApi
           message: "some wierd error in resque",
           backtrace: "Look at arguments",
           arguments: {job: Resque.redis.lindex("resque:failed", i)},
-          error_type: :error,
+          error_type: :warn,
           raised_at: Time.now,
         })
       end
