@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Ondrej Bartas"]
-  s.date = "2013-02-05"
+  s.date = "2013-02-18"
   s.description = "easily log exceptions to Overseer"
   s.email = "ondrej@bartas.cz"
   s.extra_rdoc_files = [
@@ -24,7 +24,8 @@ Gem::Specification.new do |s|
     "Rakefile",
     "VERSION",
     "lib/overseer-api.rb",
-    "lib/overseer_api/overseer_api.rb",
+    "lib/overseer-api/middleware.rb",
+    "lib/overseer-api/overseer-api.rb",
     "overseer-api.gemspec",
     "test/helper.rb",
     "test/test_overseer-api.rb"
