@@ -1,4 +1,5 @@
 require 'action_dispatch'
+require 'overseer-api'
 
 module OverseerApi
   class Middleware
