@@ -115,7 +115,6 @@ module OverseerApi
         app_name: OverseerApi.app_name
       )
     )
-    puts params
     curl.http "POST"
 
     response = Yajl::Parser.parse(curl.body_str)

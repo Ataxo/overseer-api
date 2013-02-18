@@ -6,5 +6,5 @@ require 'hashr'
 require 'curb'
 require 'yajl'
 
-require File.join(File.dirname(__FILE__),"overseer_api/overseer_api")
-require File.join(File.dirname(__FILE__),"overseer_api/middleware")
+require File.join(File.dirname(__FILE__),"overseer-api/overseer_api")
+#require File.join(File.dirname(__FILE__),"overseer-api/middleware")
