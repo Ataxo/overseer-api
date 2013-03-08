@@ -5,10 +5,14 @@ module OverseerApi
   class Middleware
     def self.default_ignore_exceptions
       [].tap do |exceptions|
-        exceptions << ActiveRecord::RecordNotFound if defined? ActiveRecord
-        exceptions << AbstractController::ActionNotFound if defined? AbstractController
-        exceptions << ActionController::RoutingError if defined? ActionController
+        exceptions << ActiveRecord::RecordNotFound if defined? ActiveRecord && defined? ActiveRecord::RecordNotFound
+        exceptions << AbstractController::ActionNotFound if defined? AbstractController && defined? AbstractController::ActionNotFound
+        exceptions << ActionController::RoutingError if defined? ActionController && defined? ActionController::RoutingError
       end
+    rescue Exception => e
+      puts "Problem with loading Overseer::Middleware error:"
+      puts e.message
+      []
     end
 
     def initialize(app, options = {})
